@@ -9,5 +9,5 @@ import (
 func SetupRouters() {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/login", login.HandleLogin)
+	router.HandleFunc("/login/auth", login.HandleLogin)
 }
