@@ -1,21 +1,22 @@
 package login_repositories
 
-func GetPasswordByUsername(username string) (string, error) {
-	return "pass", nil
+import (
+	"fmt"
+	login_models "go-chat/models/login"
+)
+
+func GetLoginByUsername(username string) (*login_models.Login, error) {
+	return nil, nil
 }
 
 func CreateNewLogin(username string, hash string) error {
 	if !verifyUsernameDuplicity(username) {
 		return nil
 	} else {
-		return nil // nao lembro como retornar erro
+		return fmt.Errorf("cannot create account")
 	}
 }
 
 func verifyUsernameDuplicity(username string) bool {
 	return false
-}
-
-func VerifyUsernameExists(username string) error {
-	return nil
 }
