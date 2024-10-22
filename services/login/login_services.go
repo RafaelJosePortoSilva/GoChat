@@ -23,16 +23,16 @@ func AuthUser(username string, pass string) (*chat_models.User, error) {
 
 	isHashCorrect := checkPasswordHash(pass, hashPassInDB)
 
-	if isHashCorrect {
-		user, err := user_services.GetUser(login.IDUser)
-		if err != nil {
-			return nil, fmt.Errorf("invalid user")
-		}
-
-		return user, nil
-	} else {
+	if !isHashCorrect {
 		return nil, fmt.Errorf("invalid password")
 	}
+
+	user, err := user_services.GetUser(login.IDUser)
+	if err != nil {
+		return nil, fmt.Errorf("invalid user")
+	}
+
+	return user, nil
 
 }
 

@@ -18,11 +18,24 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = login_services.AuthUser(login.Username, login.Password)
+	user, err := login_services.AuthUser(login.Username, login.Password)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte(fmt.Sprintf(`{"message": %s}`, err.Error())))
 		return
 	}
+
+	// Colocar JWT AQUI
+
+	// Armazena o ID do usuário na sessão
+	http.SetCookie(w, &http.Cookie{
+		Name:  "user_id",
+		Value: user.ID, // Armazena o ID do usuário
+		Path:  "/",
+		// Configure outras opções conforme necessário, como HttpOnly, Secure, etc.
+	})
+
+	// Redireciona para a página do sistema
+	http.Redirect(w, r, "/index", http.StatusSeeOther)
 
 }
