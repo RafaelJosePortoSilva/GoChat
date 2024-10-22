@@ -25,17 +25,22 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Colocar JWT AQUI
+	// Gera o token JWT
+	token, err := login_services.GenerateJWT(user)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"message": "Error generating token"}`))
+		return
+	}
 
-	// Armazena o ID do usuário na sessão
-	http.SetCookie(w, &http.Cookie{
-		Name:  "user_id",
-		Value: user.ID, // Armazena o ID do usuário
-		Path:  "/",
-		// Configure outras opções conforme necessário, como HttpOnly, Secure, etc.
-	})
+	// Define o token no cabeçalho da resposta
+	w.Header().Set("Authorization", "Bearer "+token)
 
-	// Redireciona para a página do sistema
-	http.Redirect(w, r, "/index", http.StatusSeeOther)
+	// Opcional: Retorna uma resposta JSON para confirmar que o login foi bem-sucedido
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(fmt.Sprintf(`{"message": "Login successful", "token": "%s"}`, token)))
+
+	// Descomentar depois de criar o index
+	//http.Redirect(w, r, "/index", http.StatusSeeOther)
 
 }
