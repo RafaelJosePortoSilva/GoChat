@@ -6,8 +6,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func SetupRouters() {
+func SetupRouters() *mux.Router {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/login/auth", login.HandleLogin)
+
+	return router
 }
