@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"go-chat/routes"
 	"log"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 func main() {
 	r := routes.SetupRouters()
 	addr := ":8080"
+	fmt.Printf("Setup routes OK\n")
 
 	srv := &http.Server{
 		Handler:           r,
@@ -19,7 +21,11 @@ func main() {
 		IdleTimeout:       60 * time.Second,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
+	fmt.Printf("Server created\n")
 
-	log.Fatal(srv.ListenAndServe())
-
+	err := srv.ListenAndServe()
+	if err != nil && err != http.ErrServerClosed {
+		log.Fatalf("Server failed: %v\n", err)
+	}
+	fmt.Printf("Address: %s", addr)
 }

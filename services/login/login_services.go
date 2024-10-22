@@ -12,14 +12,10 @@ import (
 func AuthUser(username string, pass string) (*chat_models.User, error) {
 
 	login, err := login_repo.GetLoginByUsername(username)
-	if err != nil {
+	if err != nil || login == nil {
 		return nil, fmt.Errorf("invalid username")
 	}
-
 	hashPassInDB := login.Password
-	if err != nil {
-		return nil, fmt.Errorf("internal error")
-	}
 
 	isHashCorrect := checkPasswordHash(pass, hashPassInDB)
 
