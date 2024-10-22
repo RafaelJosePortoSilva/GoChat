@@ -1,15 +1,18 @@
 package routes
 
 import (
-	login "go-chat/handlers/login"
+	login_handlers "go-chat/handlers/login"
 
 	"github.com/gorilla/mux"
 )
 
 func SetupRouters() *mux.Router {
-	router := mux.NewRouter()
+	r := mux.NewRouter()
 
-	router.HandleFunc("/login/auth", login.HandleLogin)
+	chat := r.PathPrefix("/chat").Subrouter()
+	chat.Use(login_handlers.AuthMiddleware)
 
-	return router
+	r.HandleFunc("/login/auth", login_handlers.HandleLogin)
+
+	return r
 }

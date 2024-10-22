@@ -8,8 +8,8 @@ import (
 )
 
 // Middleware para verificar o JWT
-func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func AuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		// Obtem o token do cabeçalho
 		tokenString := r.Header.Get("Authorization")
@@ -32,5 +32,5 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 
 		// Chama o próximo handler
 		next.ServeHTTP(w, r)
-	}
+	})
 }
