@@ -35,16 +35,6 @@ func main() {
 	}
 	defer db.Close()
 
-	err = database.CreateDatabaseIfNotExists(dbName, dbUser, dbPassword, dbHost, dbPort)
-	if err != nil {
-		log.Fatalf("Database creating failed: %v\n", err)
-	}
-
-	err = database.CreateTablesIfNotExists(db)
-	if err != nil {
-		log.Fatalf("Database tables creating failed: %v\n", err)
-	}
-
 	// Configurando servidor
 	r := routes.SetupRouters(db)
 	addr := ":8080"
