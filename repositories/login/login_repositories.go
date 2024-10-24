@@ -7,6 +7,23 @@ import (
 )
 
 func GetLoginByUsername(db *sql.DB, username string) (*login_models.Login, error) {
+
+	var login login_models.Login
+
+	query := `
+	SELECT *
+	FROM logins
+	WHERE username=$1
+	`
+	row := db.QueryRow(query, username)
+	err := row.Scan(&login.Username, &login.Password, &login.IDUser)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("login not found for username: %s", username)
+		}
+		return nil, err
+	}
+
 	return nil, nil
 }
 

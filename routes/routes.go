@@ -22,7 +22,7 @@ func SetupRouters(db *sql.DB) *mux.Router {
 
 	login := r.PathPrefix("/login").Subrouter()
 
-	login.HandleFunc("/auth", login_handlers.HandleLogin())
+	login.HandleFunc("/auth", login_handlers.HandleLogin(db))
 	login.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./static/login/login.html")
 	})

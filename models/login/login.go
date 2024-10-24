@@ -9,10 +9,9 @@ type Login struct {
 func CreateTableLogins() string {
 	return `
 CREATE TABLE IF NOT EXISTS logins (
-    username VARCHAR(50),
-    password VARCHAR(50),
-    id_user INT REFERENCES users(id)
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(50) NOT NULL,
+    id_user INT REFERENCES users(id) NOT NULL
 );
-
 	`
 }

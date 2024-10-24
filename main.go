@@ -33,6 +33,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Database open failed: %v\n", err)
 	}
+	defer db.Close()
 
 	err = database.CreateDatabaseIfNotExists(dbName, dbUser, dbPassword, dbHost, dbPort)
 	if err != nil {
@@ -45,7 +46,7 @@ func main() {
 	}
 
 	// Configurando servidor
-	r := routes.SetupRouters()
+	r := routes.SetupRouters(db)
 	addr := ":8080"
 	fmt.Printf("Setup routes OK\n")
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	chat_models "go-chat/models/chat"
 	login_models "go-chat/models/login"
+	"log"
 
 	_ "github.com/lib/pq"
 )
@@ -67,7 +68,12 @@ func CreateTablesIfNotExists(db *sql.DB) error {
 
 	for _, createTableQuery := range databases {
 
-		_, err := db.Exec(createTableQuery)
+		err := db.Ping()
+		if err != nil {
+			log.Fatalf("Error creating table: %v", err)
+		}
+
+		_, err = db.Exec(createTableQuery)
 		if err != nil {
 			return fmt.Errorf("error creating table: %v", err)
 		}

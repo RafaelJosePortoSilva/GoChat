@@ -21,7 +21,7 @@ func HandleLogin(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		user, err := login_services.AuthUser(login.Username, login.Password)
+		user, err := login_services.AuthUser(db, login.Username, login.Password)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(fmt.Sprintf(`{"message": %s}`, err.Error())))
