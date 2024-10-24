@@ -15,7 +15,6 @@ import (
 func main() {
 
 	// Buscando variaveis de ambiente
-	// dbName, dbUser, dbPassword, dbHost, dbPort
 
 	err := godotenv.Load()
 	if err != nil {

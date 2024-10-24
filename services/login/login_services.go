@@ -1,6 +1,7 @@
 package services_login
 
 import (
+	"database/sql"
 	"fmt"
 	chat_models "go-chat/models/chat"
 	login_repo "go-chat/repositories/login"
@@ -9,9 +10,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func AuthUser(username string, pass string) (*chat_models.User, error) {
+func AuthUser(db *sql.DB, username string, pass string) (*chat_models.User, error) {
 
-	login, err := login_repo.GetLoginByUsername(username)
+	login, err := login_repo.GetLoginByUsername(db, username)
 	if err != nil || login == nil {
 		return nil, fmt.Errorf("invalid username")
 	}
@@ -23,7 +24,7 @@ func AuthUser(username string, pass string) (*chat_models.User, error) {
 		return nil, fmt.Errorf("invalid password")
 	}
 
-	user, err := user_services.GetUser(login.IDUser)
+	user, err := user_services.GetUser(db, login.IDUser)
 	if err != nil {
 		return nil, fmt.Errorf("invalid user")
 	}

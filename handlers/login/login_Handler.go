@@ -1,6 +1,7 @@
 package login_handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	login_models "go-chat/models/login"
@@ -8,7 +9,7 @@ import (
 	"net/http"
 )
 
-func HandleLogin() http.HandlerFunc {
+func HandleLogin(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		var login login_models.Login

@@ -1,10 +1,11 @@
 package chat_repositories
 
 import (
+	"database/sql"
 	chat_models "go-chat/models/chat"
 )
 
-func GetUserById(id string) (*chat_models.User, error) {
+func GetUserById(db *sql.DB, id string) (*chat_models.User, error) {
 
 	return nil, nil
 

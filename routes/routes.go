@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"database/sql"
 	"fmt"
 	login_handlers "go-chat/handlers/login"
 	"net/http"
@@ -8,7 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func SetupRouters() *mux.Router {
+func SetupRouters(db *sql.DB) *mux.Router {
 	r := mux.NewRouter()
 
 	// Rota básica de teste
