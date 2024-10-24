@@ -13,18 +13,37 @@ import (
 func OpenConn(dbName, dbUser, dbPassword, dbHost, dbPort string) (*sql.DB, error) {
 
 	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=postgres sslmode=disable", dbHost, dbPort, dbUser, dbPassword)
+	postgres, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	err = postgres.Ping()
+	if err != nil {
+		panic(err)
+	}
+	defer postgres.Close()
+
+	err = createDatabaseIfNotExists(dbName, dbUser, dbPassword, dbHost, dbPort)
+	if err != nil {
+		log.Fatalf("Database creating failed: %v\n", err)
+	}
+
+	connStr = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", dbHost, dbPort, dbUser, dbPassword, dbName)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		panic(err)
 	}
 
-	err = db.Ping()
+	err = createTablesIfNotExists(db)
+	if err != nil {
+		log.Fatalf("Database tables creating failed: %v\n", err)
+	}
 
 	return db, err
 
 }
 
-func CreateDatabaseIfNotExists(dbName, dbUser, dbPassword, dbHost, dbPort string) error {
+func createDatabaseIfNotExists(dbName, dbUser, dbPassword, dbHost, dbPort string) error {
 
 	// Para verificar, preciso conectar ao banco padrao do postgres
 	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=postgres sslmode=disable", dbHost, dbPort, dbUser, dbPassword)
@@ -32,7 +51,7 @@ func CreateDatabaseIfNotExists(dbName, dbUser, dbPassword, dbHost, dbPort string
 	if err != nil {
 		return err
 	}
-	defer db.Close()
+	//defer db.Close()
 
 	// Verifica se o banco de dados já existe
 	var exists bool
@@ -56,7 +75,7 @@ func CreateDatabaseIfNotExists(dbName, dbUser, dbPassword, dbHost, dbPort string
 	return nil
 }
 
-func CreateTablesIfNotExists(db *sql.DB) error {
+func createTablesIfNotExists(db *sql.DB) error {
 	// Define a query para criar a tabela, se ela não existir
 
 	databases := []string{
