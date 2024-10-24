@@ -6,15 +6,31 @@ import (
 	"go-chat/routes"
 	"log"
 	"net/http"
+	"os"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
 
 	// Buscando variaveis de ambiente
+	// dbName, dbUser, dbPassword, dbHost, dbPort
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading env file: %v", err)
+	}
+
+	// Acessa as variáveis de ambiente
+	dbHost := os.Getenv("DB_HOST")
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+	dbPort := os.Getenv("DB_PORT")
 
 	// Configurando base de dados
-	db := database.OpenConn()
+	db, err := database.OpenConn(dbName, dbUser, dbPassword, dbHost, dbPort)
 
 	// Configurando servidor
 	r := routes.SetupRouters()
