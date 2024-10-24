@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"go-chat/database"
 	"go-chat/routes"
 	"log"
 	"net/http"
@@ -9,6 +10,13 @@ import (
 )
 
 func main() {
+
+	// Buscando variaveis de ambiente
+
+	// Configurando base de dados
+	db := database.OpenConn()
+
+	// Configurando servidor
 	r := routes.SetupRouters()
 	addr := ":8080"
 	fmt.Printf("Setup routes OK\n")
