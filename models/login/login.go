@@ -5,3 +5,14 @@ type Login struct {
 	Password string `json:"password"`
 	IDUser   string `json:"IDUser"`
 }
+
+func CreateTableLogins() string {
+	return `
+CREATE TABLE IF NOT EXISTS logins (
+    username VARCHAR(50),
+    password VARCHAR(50),
+    id_user INT REFERENCES users(id)
+);
+
+	`
+}
