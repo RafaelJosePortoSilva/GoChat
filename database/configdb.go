@@ -23,7 +23,7 @@ func OpenConn(dbName, dbUser, dbPassword, dbHost, dbPort string) (*sql.DB, error
 
 }
 
-func createDatabaseIfNotExists(dbName, dbUser, dbPassword, dbHost, dbPort string) error {
+func CreateDatabaseIfNotExists(dbName, dbUser, dbPassword, dbHost, dbPort string) error {
 
 	// Para verificar, preciso conectar ao banco padrao do postgres
 	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=postgres sslmode=disable", dbHost, dbPort, dbUser, dbPassword)
@@ -55,7 +55,7 @@ func createDatabaseIfNotExists(dbName, dbUser, dbPassword, dbHost, dbPort string
 	return nil
 }
 
-func createTablesIfNotExists(db *sql.DB) error {
+func CreateTablesIfNotExists(db *sql.DB) error {
 	// Define a query para criar a tabela, se ela não existir
 
 	databases := []string{

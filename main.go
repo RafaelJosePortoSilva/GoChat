@@ -31,6 +31,19 @@ func main() {
 
 	// Configurando base de dados
 	db, err := database.OpenConn(dbName, dbUser, dbPassword, dbHost, dbPort)
+	if err != nil {
+		log.Fatalf("Database open failed: %v\n", err)
+	}
+
+	err = database.CreateDatabaseIfNotExists(dbName, dbUser, dbPassword, dbHost, dbPort)
+	if err != nil {
+		log.Fatalf("Database creating failed: %v\n", err)
+	}
+
+	err = database.CreateTablesIfNotExists(db)
+	if err != nil {
+		log.Fatalf("Database tables creating failed: %v\n", err)
+	}
 
 	// Configurando servidor
 	r := routes.SetupRouters()
@@ -47,7 +60,7 @@ func main() {
 	}
 	fmt.Printf("Server created\n")
 
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
 		log.Fatalf("Server failed: %v\n", err)
 	}
