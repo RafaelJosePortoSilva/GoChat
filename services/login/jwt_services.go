@@ -14,7 +14,7 @@ func GenerateJWT(user *chat_models.User) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"ID":             user.ID,                          // Subject (user identifier)
-		"username":       user.Username,                    // Issuer
+		"name":           user.Name,                        // Issuer
 		"expirationTime": time.Now().Add(time.Hour).Unix(), // Expiration time
 		"iat":            time.Now().Unix(),                // Issued at
 	})

@@ -16,3 +16,13 @@ func GetUser(db *sql.DB, id string) (*chat_models.User, error) {
 	return user, nil
 
 }
+
+func CreateUser(db *sql.DB, id string) error {
+
+	err := chat_repo.CreateNewUser(db, id)
+	if err != nil {
+		return err
+	}
+	return nil
+
+}

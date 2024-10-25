@@ -16,7 +16,7 @@ func GetLoginByUsername(db *sql.DB, username string) (*login_models.Login, error
 	WHERE username=$1
 	`
 	row := db.QueryRow(query, username)
-	err := row.Scan(&login.Username, &login.Password, &login.IDUser)
+	err := row.Scan(&login.Username, &login.Password, &login.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("login not found for username: %s", username)
@@ -27,14 +27,35 @@ func GetLoginByUsername(db *sql.DB, username string) (*login_models.Login, error
 	return nil, nil
 }
 
-func CreateNewLogin(db *sql.DB, username string, hash string) error {
-	if !verifyUsernameDuplicity(db, username) {
-		return nil
-	} else {
-		return fmt.Errorf("cannot create account")
+func CreateNewLogin(db *sql.DB, username string, hash string) (string, error) {
+
+	var id string
+	if verifyUsernameDuplicity(db, username) {
+		return "", fmt.Errorf("duplicated username")
 	}
+
+	query := `INSERT INTO logins (username, password) VALUES ($1, $2) RETURNING id`
+	err := db.QueryRow(query, username, hash).Scan(&id)
+	if err != nil {
+		return "", err
+	}
+
+	return id, nil
+
 }
 
 func verifyUsernameDuplicity(db *sql.DB, username string) bool {
 	return false
+}
+
+func DeleteLogin(db *sql.DB, id string) (int64, error) {
+
+	query := `DELETE FROM logins WHERE id=$1`
+	res, err := db.Exec(query, id)
+	if err != nil {
+		return 0, err
+	}
+
+	return res.RowsAffected()
+
 }

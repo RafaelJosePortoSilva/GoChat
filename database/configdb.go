@@ -79,8 +79,8 @@ func createTablesIfNotExists(db *sql.DB) error {
 	// Define a query para criar a tabela, se ela não existir
 
 	databases := []string{
-		chat_models.CreateTableUsers(),
 		login_models.CreateTableLogins(),
+		chat_models.CreateTableUsers(),
 	}
 
 	// Executa a query
