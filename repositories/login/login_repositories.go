@@ -30,7 +30,7 @@ func GetLoginByUsername(db *sql.DB, username string) (*login_models.Login, error
 func CreateNewLogin(db *sql.DB, username string, hash string) (string, error) {
 
 	var id string
-	if verifyUsernameDuplicity(db, username) {
+	if hasUsernameDuplicity(db, username) {
 		return "", fmt.Errorf("duplicated username")
 	}
 
@@ -44,8 +44,16 @@ func CreateNewLogin(db *sql.DB, username string, hash string) (string, error) {
 
 }
 
-func verifyUsernameDuplicity(db *sql.DB, username string) bool {
-	return false
+func hasUsernameDuplicity(db *sql.DB, username string) bool {
+
+	var aux string
+	query := `
+	SELECT *
+	FROM logins
+	WHERE username=$1
+	`
+	err := db.QueryRow(query, username).Scan(&aux)
+	return !(err == nil)
 }
 
 func DeleteLogin(db *sql.DB, id string) (int64, error) {
