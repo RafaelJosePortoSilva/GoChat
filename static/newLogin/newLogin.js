@@ -14,8 +14,14 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
         });
 
         if (!response.ok) {
-            const errorMessage = await response.json();
-            document.getElementById("error-message").innerText = errorMessage.message;
+            let errorMessage = "An unexpected error occurred.";
+            try {
+                const errorResponse = await response.json();
+                errorMessage = errorResponse.message || errorMessage;
+            } catch (parseError) {
+                console.error("Error parsing JSON:", parseError);
+            }
+            document.getElementById("error-message").innerText = errorMessage;
         }
     } catch (error) {
         console.error("Error logging in:", error);

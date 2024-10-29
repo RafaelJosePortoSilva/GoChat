@@ -30,12 +30,14 @@ func GetLoginByUsername(db *sql.DB, username string) (*login_models.Login, error
 func CreateNewLogin(db *sql.DB, username string, hash string) (string, error) {
 
 	var id string
-	if hasUsernameDuplicity(db, username) {
-		return "", fmt.Errorf("duplicated username")
+
+	isDuplicated, err := hasUsernameDuplicity(db, username)
+	if isDuplicated {
+		return "", err
 	}
 
 	query := `INSERT INTO logins (username, password) VALUES ($1, $2) RETURNING id`
-	err := db.QueryRow(query, username, hash).Scan(&id)
+	err = db.QueryRow(query, username, hash).Scan(&id)
 	if err != nil {
 		return "", err
 	}
@@ -44,16 +46,25 @@ func CreateNewLogin(db *sql.DB, username string, hash string) (string, error) {
 
 }
 
-func hasUsernameDuplicity(db *sql.DB, username string) bool {
-
-	var aux string
+func hasUsernameDuplicity(db *sql.DB, username string) (bool, error) {
+	var existingUsername string
 	query := `
-	SELECT *
-	FROM logins
-	WHERE username=$1
-	`
-	err := db.QueryRow(query, username).Scan(&aux)
-	return !(err == nil)
+    SELECT username
+    FROM logins
+    WHERE username = $1
+    `
+	err := db.QueryRow(query, username).Scan(&existingUsername)
+
+	if err == sql.ErrNoRows {
+		// Nenhuma duplicidade encontrada
+		return false, nil
+	} else if err != nil {
+		// Outro erro ocorreu
+		return false, fmt.Errorf("error checking username duplicity: %v", err)
+	}
+
+	// Duplicidade encontrada
+	return true, fmt.Errorf("username already used")
 }
 
 func DeleteLogin(db *sql.DB, id string) (int64, error) {

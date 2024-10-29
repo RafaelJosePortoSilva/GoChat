@@ -17,6 +17,9 @@ func SetupRouters(db *sql.DB) *mux.Router {
 	r.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Test route is working")
 	})
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/login/", http.StatusSeeOther)
+	})
 
 	// Serve arquivos estáticos da pasta "static/login/"
 	r.PathPrefix("/static/login/").Handler(http.StripPrefix("/static/login/", http.FileServer(http.Dir("./static/login/"))))
@@ -24,7 +27,7 @@ func SetupRouters(db *sql.DB) *mux.Router {
 
 	login := r.PathPrefix("/login").Subrouter()
 
-	login.HandleFunc("/auth", login_handlers.HandleLogin(db)).Methods("POST")
+	login.HandleFunc("/", login_handlers.HandleLogin(db)).Methods("POST")
 	login.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./static/login/login.html")
 	}).Methods("GET")

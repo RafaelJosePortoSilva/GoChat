@@ -23,8 +23,9 @@ func HandleLogin(db *sql.DB) http.HandlerFunc {
 
 		user, err := login_services.AuthUser(db, login.Username, login.Password)
 		if err != nil {
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(fmt.Sprintf(`{"message": %s}`, err.Error())))
+			w.Write([]byte(fmt.Sprintf(`{"message": "%s"}`, err.Error())))
 			fmt.Printf("Error login handler - auth user: %s\n", err.Error())
 			return
 		}
@@ -32,6 +33,7 @@ func HandleLogin(db *sql.DB) http.HandlerFunc {
 		// Gera o token JWT
 		token, err := login_services.GenerateJWT(user)
 		if err != nil {
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(`{"message": "Error generating token"}`))
 			fmt.Printf("Error login handler - gen jwt: %s\n", err.Error())
@@ -58,6 +60,7 @@ func HandleCreateLogin(db *sql.DB) http.HandlerFunc {
 		var login login_models.Login
 		err := json.NewDecoder(r.Body).Decode(&login)
 		if err != nil {
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte(`{"message": "Bad Request"}`))
 			fmt.Printf("Bad Request\n")
@@ -66,12 +69,13 @@ func HandleCreateLogin(db *sql.DB) http.HandlerFunc {
 
 		err = login_services.CreateLogin(db, login.Username, login.Password)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(fmt.Sprintf(`{"message": %s}`, err)))
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusConflict)
+			w.Write([]byte(fmt.Sprintf(`{"message": "%s"}`, err)))
 			fmt.Printf("Bad Request: %s\n", err)
 			return
 		}
-
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusSeeOther)
 		w.Write([]byte(`{"message": "register successful"}`))
 		fmt.Printf("Register Successful")
