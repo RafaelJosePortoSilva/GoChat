@@ -1,11 +1,16 @@
 package login_handlers
 
 import (
+	"context"
 	"fmt"
 	login_services "go-chat/services/login"
 	"net/http"
 	"strings"
 )
+
+type contextKey string
+
+const UserIDContextKey = contextKey("id")
 
 // Middleware para verificar o JWT
 func AuthMiddleware(next http.Handler) http.Handler {
@@ -17,20 +22,27 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 		// Verifica se o token não está vazio
 		if tokenString == "" {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			http.Redirect(w, r, "/login/", http.StatusSeeOther)
 			return
 		}
 
 		// Verify the token
-		_, err := login_services.VerifyJWTToken(tokenString)
+		token, err := login_services.VerifyJWTToken(tokenString)
 		if err != nil {
 			fmt.Printf("Token verification failed: %v\\n", err)
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 
+		userId, err := login_services.GetUserIDFromJWTToken(token)
+		if err != nil {
+			fmt.Printf("Token verification failed: %v\\n", err)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+		ctx := context.WithValue(r.Context(), UserIDContextKey, userId)
+
 		// Chama o próximo handler
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

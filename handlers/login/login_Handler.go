@@ -47,7 +47,36 @@ func HandleLogin(db *sql.DB) http.HandlerFunc {
 		fmt.Printf("Successful login")
 
 		// Descomentar depois de criar o index
-		//http.Redirect(w, r, "/index", http.StatusSeeOther)
+		http.Redirect(w, r, "/chat/", http.StatusSeeOther)
+
+	}
+}
+
+func HandleCreateLogin(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		var login login_models.Login
+		err := json.NewDecoder(r.Body).Decode(&login)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(`{"message": "Bad Request"}`))
+			fmt.Printf("Bad Request\n")
+			return
+		}
+
+		err = login_services.CreateLogin(db, login.Username, login.Password)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(fmt.Sprintf(`{"message": %s}`, err)))
+			fmt.Printf("Bad Request: %s\n", err)
+			return
+		}
+
+		w.WriteHeader(http.StatusSeeOther)
+		w.Write([]byte(`{"message": "register successful"}`))
+		fmt.Printf("Register Successful")
+
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 
 	}
 }

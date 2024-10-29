@@ -46,3 +46,12 @@ func VerifyJWTToken(tokenString string) (*jwt.Token, error) {
 	// Return the verified token
 	return token, nil
 }
+
+func GetUserIDFromJWTToken(token *jwt.Token) (string, error) {
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || claims["ID"] == nil {
+		return "", fmt.Errorf("invalid token")
+	}
+	return claims["ID"].(string), nil
+}

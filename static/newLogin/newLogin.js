@@ -5,7 +5,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
     const password = document.getElementById("password").value;
 
     try {
-        const response = await fetch("/login/", {
+        const response = await fetch("/login/new", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -19,6 +19,6 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
         }
     } catch (error) {
         console.error("Error logging in:", error);
-        document.getElementById("error-message").innerText = "An error occurred during login.";
+        document.getElementById("error-message").innerText = "An error occurred during register.";
     }
 });
