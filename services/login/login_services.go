@@ -15,9 +15,14 @@ import (
 func AuthUser(db *sql.DB, username string, pass string) (*chat_models.User, error) {
 
 	login, err := login_repo.GetLoginByUsername(db, username)
-	if err != nil || login == nil {
-		return nil, fmt.Errorf("invalid username")
+	if err != nil {
+		return nil, err
 	}
+
+	if login == nil {
+		return nil, fmt.Errorf("cannot find user")
+	}
+
 	hashPassInDB := login.Password
 
 	isHashCorrect := checkPasswordHash(pass, hashPassInDB)
@@ -59,7 +64,7 @@ func CreateLogin(db *sql.DB, username string, pass string) error {
 	// Agora, criar o user correspondente
 	// Se não conseguir criar o user, apagar o login e cancelar a operação
 
-	err = user_services.CreateUser(db, id)
+	err = user_services.CreateUser(db, id, username)
 	if err != nil {
 		_, err := DeleteLogin(db, id)
 		if err != nil {

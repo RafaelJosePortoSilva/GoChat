@@ -16,15 +16,14 @@ func GetLoginByUsername(db *sql.DB, username string) (*login_models.Login, error
 	WHERE username=$1
 	`
 	row := db.QueryRow(query, username)
-	err := row.Scan(&login.Username, &login.Password, &login.ID)
+	err := row.Scan(&login.ID, &login.Username, &login.Password)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("login not found for username: %s", username)
 		}
 		return nil, err
 	}
-
-	return nil, nil
+	return &login, nil
 }
 
 func CreateNewLogin(db *sql.DB, username string, hash string) (string, error) {

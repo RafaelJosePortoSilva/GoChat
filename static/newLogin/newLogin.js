@@ -22,7 +22,19 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
                 console.error("Error parsing JSON:", parseError);
             }
             document.getElementById("error-message").innerText = errorMessage;
+        } else {
+            try {
+                const successResponse = await response.json();
+                const message = successResponse.message || "Registration successful!";
+                document.getElementById("error-message").innerText = message;
+        
+                window.location.href = "/login";
+            } catch (parseError) {
+                console.error("Error parsing JSON:", parseError);
+                document.getElementById("error-message").innerText = "An error occurred, but the registration might be successful.";
+            }
         }
+        
     } catch (error) {
         console.error("Error logging in:", error);
         document.getElementById("error-message").innerText = "An error occurred during register.";

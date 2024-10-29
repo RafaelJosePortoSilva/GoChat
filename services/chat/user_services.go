@@ -17,9 +17,9 @@ func GetUser(db *sql.DB, id string) (*chat_models.User, error) {
 
 }
 
-func CreateUser(db *sql.DB, id string) error {
+func CreateUser(db *sql.DB, id string, username string) error {
 
-	err := chat_repo.CreateNewUser(db, id)
+	err := chat_repo.CreateNewUser(db, id, username)
 	if err != nil {
 		return err
 	}
