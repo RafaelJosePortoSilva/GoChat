@@ -11,7 +11,7 @@ func CreateTableLogins() string {
 CREATE TABLE IF NOT EXISTS logins (
 	id SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(50) NOT NULL
+    password VARCHAR(250) NOT NULL
 );
 	`
 }
