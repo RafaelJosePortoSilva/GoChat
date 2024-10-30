@@ -28,7 +28,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
                 const message = successResponse.message || "Login successful!";
                 document.getElementById("error-message").innerText = message;
         
-                window.location.href = "/";
+                window.location.href = "/chat/";
             } catch (parseError) {
                 console.error("Error parsing JSON:", parseError);
                 document.getElementById("error-message").innerText = "An error occurred, but the login might be successful.";

@@ -15,6 +15,7 @@ const UserIDContextKey = contextKey("id")
 // Middleware para verificar o JWT
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Printf("AuthMiddleware: entrou no middleware")
 
 		// Obtem o token do cabeçalho
 		tokenString := r.Header.Get("Authorization")
@@ -23,6 +24,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		// Verifica se o token não está vazio
 		if tokenString == "" {
 			http.Redirect(w, r, "/login/", http.StatusSeeOther)
+			fmt.Printf("AuthMiddleware: tokenString vazia: %s", tokenString)
 			return
 		}
 

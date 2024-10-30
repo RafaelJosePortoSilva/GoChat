@@ -31,7 +31,6 @@ func HandleLogin(db *sql.DB) http.HandlerFunc {
 		}
 
 		// Gera o token JWT
-		fmt.Print(user)
 		token, err := login_services.GenerateJWT(user)
 		if err != nil {
 			w.Header().Set("Content-Type", "application/json")
@@ -40,17 +39,15 @@ func HandleLogin(db *sql.DB) http.HandlerFunc {
 			fmt.Printf("Error login handler - gen jwt: %s\n", err.Error())
 			return
 		}
+		fmt.Printf("login_handler token: %s", token)
 
 		// Define o token no cabeçalho da resposta
 		w.Header().Set("Authorization", "Bearer "+token)
 
 		// Opcional: Retorna uma resposta JSON para confirmar que o login foi bem-sucedido
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"message": "Login successful", "redirect" : "/chat"`))
+		w.Write([]byte(`{"message": "login successful", "redirect": "/chat/"}`))
 		fmt.Printf("Successful login")
-
-		// Descomentar depois de criar o index
-		http.Redirect(w, r, "/chat/", http.StatusSeeOther)
 
 	}
 }
